@@ -1,0 +1,21 @@
+import React from "react";
+import FoodCard from "./FoodCard";
+
+function FoodList({ products }) {
+  if (products.length === 0) {
+    return <p>No results found. Try a different search.</p>;
+  }
+
+  return (
+    <div className="food-list">
+      {products.map((product) => (
+        <FoodCard
+          key={product.code}   // unique barcode from API
+          product={product}
+        />
+      ))}
+    </div>
+  );
+}
+
+export default FoodList;

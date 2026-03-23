@@ -1,0 +1,47 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: sans-serif;
+  /* background, text color, max-width layout */
+  background-color: #f8f8f8;
+  color: #333;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1 {
+  /* size, spacing, maybe a color */
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #ff6347; /* tomato color for a food-related theme */
+}
+
+.food-card {
+  /* border, padding, border-radius, maybe a shadow */
+  /* this className needs to match what you used in FoodCard.jsx */
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.food-list {
+  /* display: grid or flex to lay cards out nicely */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+input, button {
+  /* consistent styling */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
