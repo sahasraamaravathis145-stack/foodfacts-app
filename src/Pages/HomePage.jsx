@@ -3,13 +3,14 @@ import FoodList from '../components/FoodList'
 import useFoodSearch from '../hooks/useFoodSearch'
 
 function HomePage() {
-  const { results, loading, error, searchFood } = useFoodSearch()
+  const { results, loading, error, search } = useFoodSearch()
 
   return (
     <div className="page">
       <h2>Search Nutrition Info</h2>
 
-      <SearchBar onSearch={searchFood} />
+      {/* 🔍 Search */}
+      <SearchBar onSearch={search} />
 
       {/* 🔄 Loading */}
       {loading && <p>Loading... ⏳</p>}
@@ -24,7 +25,7 @@ function HomePage() {
 
       {/* 🍔 Results */}
       {!loading && !error && results.length > 0 && (
-        <FoodList foods={results} />
+        <FoodList products={results} />
       )}
     </div>
   )

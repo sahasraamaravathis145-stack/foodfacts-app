@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
-function DetailPage() {
+function DetailPage({ saved, dispatch }) {
   const { barcode } = useParams()
   const navigate = useNavigate()
 
@@ -11,6 +11,8 @@ function DetailPage() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
+    let cancelled = false
+
     const fetchProduct = async () => {
       setLoading(true)
       setError(null)
@@ -20,21 +22,42 @@ function DetailPage() {
           `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`
         )
 
-        if (response.data.status === 1) {
-          setProduct(response.data.product)
-        } else {
-          setProduct(null)
+        if (!cancelled) {
+          if (response.data.status === 1) {
+            setProduct(response.data.product)
+          } else {
+            setProduct(null)
+          }
+          setLoading(false)
         }
+
       } catch (err) {
-        setError('Failed to fetch product details.')
-        setProduct(null)
-      } finally {
-        setLoading(false)
+        if (!cancelled) {
+          setError('Could not load product details.')
+          setProduct(null)
+          setLoading(false)
+        }
       }
     }
 
     fetchProduct()
+
+    // 🧹 Cleanup function
+    return () => {
+      cancelled = true
+    }
+
   }, [barcode])
+
+  const isSaved = saved.some(p => p.code === barcode)
+
+  const handleSaveToggle = () => {
+    if (isSaved) {
+      dispatch({ type: 'REMOVE', code: barcode })
+    } else {
+      dispatch({ type: 'ADD', product: product })
+    }
+  }
 
   if (loading) return <p>Loading product details... ⏳</p>
   if (error) return <p>{error} ⚠️</p>
@@ -49,10 +72,8 @@ function DetailPage() {
 
   return (
     <div className="detail-page">
-      {/* 🔙 Back Button */}
       <button onClick={() => navigate(-1)}>← Back</button>
 
-      {/* 🧾 Header */}
       <div className="detail-header">
         <img
           src={image_front_small_url || "https://via.placeholder.com/150"}
@@ -62,7 +83,6 @@ function DetailPage() {
         <p><strong>Brand:</strong> {brands || "Unknown"}</p>
       </div>
 
-      {/* 🥗 Nutrition Info */}
       <div className="nutrition-table">
         <h3>Nutrition per 100g</h3>
         <ul>
@@ -75,18 +95,8 @@ function DetailPage() {
         </ul>
       </div>
 
-      {/* 💾 Save Button */}
-      <button
-        onClick={() => {
-          const saved = JSON.parse(localStorage.getItem('savedFoods')) || []
-          localStorage.setItem(
-            'savedFoods',
-            JSON.stringify([...saved, product])
-          )
-          alert('Saved successfully! ✅')
-        }}
-      >
-        Save to My List
+      <button onClick={handleSaveToggle}>
+        {isSaved ? '★ Remove from Saved' : '☆ Save to My List'}
       </button>
     </div>
   )
